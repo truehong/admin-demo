@@ -1,5 +1,6 @@
 package com.admin.account;
 
+import com.admin.domain.Account;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,7 +17,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.then;
 import static org.springframework.mock.http.server.reactive.MockServerHttpRequest.post;
@@ -59,8 +60,8 @@ class AccountControllerTest {
                 .andExpect(view().name("account/sign-up"));
     }
 
-    @DisplayName("회원 가입 처리 - 입력값 정상")
     @Test
+    @DisplayName("회원 가입 처리 - 입력값 정상")
     void signUpSubmit_with_correct_input() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.post("/sign-up")
                         .param("nickname", "nickname")
@@ -70,6 +71,9 @@ class AccountControllerTest {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(view().name( "redirect:/"));
 
+        Account account = accountRepository.findByEmail("correct@email.com");
+        assertNotNull(account);
+        assertNotEquals(account.getPassword(), "correct-password");
         assertTrue(accountRepository.existsByEmail("correct@email.com"));
         then(javaMailSender).should().send(any(SimpleMailMessage.class));
     }
