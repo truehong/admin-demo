@@ -13,8 +13,9 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
-    public void configure(WebSecurity web) throws Exception {
+    public void configure(WebSecurity web) {
         web.ignoring()
+                // 흔히 사용하는 위치에만 security ignoring
                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations());
     }
 
@@ -23,7 +24,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests()
                 .mvcMatchers("/","/login","/sign-up","/check-email"
                 ,"/check-email-token", "/email-login", "/check-email-login"
-                ,"/login-link")
+                ,"/login-link","/static/node_modules/**")
                 .permitAll()
                 .mvcMatchers(HttpMethod.GET, "/profile/*").permitAll()
                 .anyRequest().authenticated();
